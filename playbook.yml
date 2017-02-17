@@ -9,4 +9,10 @@
      apt: name={{ item }} state=present
      with_items:
         - git
-        - e
+        - vim
+        - zsh
+        - tmux
+   - user: name=torstein shell=/usr/bin/zsh groups=vagrant append=yes
+   #- name: set up dotfiles
+   #  become_user: torstein
+   #    git: repo=ssh://torstein@enophook.resisty.net/srv/git/torstein/home.git dest=/home/torstein/home update=yes accept_hostkey=yes
