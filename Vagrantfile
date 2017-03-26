@@ -4,7 +4,15 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "debian/contrib-jessie64"
+  config.vm.provider "virtualbox" do |v, override|
+    override.vm.box = "debian/contrib-jessie64"
+  end
+
+  config.vm.provider "docker" do |d|
+    d.build_dir = "."
+    d.cmd     = ["/sbin/my_init", "--enable-insecure-key"]
+    d.has_ssh = true
+  end
 
   config.ssh.forward_agent = true
 
