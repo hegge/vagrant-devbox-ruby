@@ -16,6 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_agent = true
 
   config.vm.provision :shell, :inline => "sed -i 's/main$/main non-free contrib/g' /etc/apt/sources.list"
+  config.vm.provision :shell, :inline => "sed -i 's/# en_DK.UTF-8/en_DK.UTF-8/' /etc/locale.gen && locale-gen"
 
   $script = <<-SCRIPT
   ln -sf /vagrant/src $HOME/src
