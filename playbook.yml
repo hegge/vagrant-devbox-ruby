@@ -1,29 +1,30 @@
 ---
 - hosts: all
-  sudo: true
+  become: true
   pre_tasks:
-   - name: update apt cache
-     apt: update_cache=yes
+  - name: update apt cache
+    apt: update_cache=yes
   tasks:
    - name: install required packages
      apt: name={{ item }} state=present
      with_items:
-        - git
-        - vim
-        - zsh
-        - tmux
+     - git
+     - vim
+     - exuberant-ctags
+     - zsh
+     - tmux
    - user: name=torstein shell=/usr/bin/zsh groups=vagrant append=yes
    - user: name=vagrant shell=/usr/bin/zsh
-   #- name: clone dotfiles
-   #  su: torstein
-   #  git:
-   #    repo: ssh://torstein@enophook.resisty.net/srv/git/torstein/home.git
-   #    dest: /home/torstein/home
-   #    update: yes
-   #    accept_hostkey: yes
+   - name: clone dotfiles
+     su: torstein
+     git:
+       repo: ssh://torstein@enophook.resisty.net/srv/git/torstein/home.git
+       dest: $HOME/home
+       update: yes
+       accept_hostkey: yes
    - name: symlink dotfiles
-     su: vagrant
-     shell: HOME=/home/vagrant /vagrant/home/symlink.sh
+     su: torstein
+     shell: $HOME/home/symlink.sh
    - name: set git config
-     su: vagrant
+     su: torstein
      shell: test ! -f .gitconfig.local && printf "[push]\n\tdefault = upstream\n" >.gitconfig.local || true
