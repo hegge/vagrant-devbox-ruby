@@ -1,0 +1,10 @@
+---
+- hosts: all
+  roles:
+  - common
+  tasks:
+  - name: install devbox packages
+    become: true
+    apt: name={{ item }} state=present
+    with_items:
+    - make

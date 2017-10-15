@@ -1,0 +1,11 @@
+---
+- hosts: mediaboxes
+  roles:
+  - common
+  tasks:
+  - name: install workstation packages
+    become: true
+    apt: name={{ item }} state=present
+    with_items:
+    - autofs
+    - kodi

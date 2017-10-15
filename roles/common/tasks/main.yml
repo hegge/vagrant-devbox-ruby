@@ -1,0 +1,34 @@
+---
+- name: update apt cache
+  become: true
+  apt: update_cache=yes
+
+- name: install required packages
+  become: true
+  apt: name={{ item }} state=present
+  with_items:
+  - git
+  - vim
+  - exuberant-ctags
+  - zsh
+  - tmux
+
+- user: name=torstein shell=/usr/bin/zsh groups=vagrant append=yes
+  become: true
+- user: name=vagrant shell=/usr/bin/zsh
+  become: true
+
+- name: clone dotfiles
+  su: torstein
+  git:
+    repo: ssh://torstein@enophook.resisty.net/srv/git/torstein/home.git
+    dest: $HOME/home
+    update: yes
+    accept_hostkey: yes
+- name: symlink dotfiles
+  su: torstein
+  shell: $HOME/home/symlink.sh
+
+- name: set git config
+  su: torstein
+  shell: test ! -f .gitconfig.local && printf "[push]\n\tdefault = upstream\n" >.gitconfig.local || true

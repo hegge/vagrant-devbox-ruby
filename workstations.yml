@@ -1,0 +1,15 @@
+---
+- hosts: workstations
+  roles:
+  - common
+  tasks:
+ - name: install workstation packages
+   become: true
+   apt: name={{ item }} state=present
+   with_items:
+   - xmonad
+   - rxvt-unicode
+   - xscreensaver
+   - gpg-agent
+   - redshift
+   - stalonetray
