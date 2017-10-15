@@ -5,7 +5,7 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |v, override|
-    override.vm.box = "debian/contrib-jessie64"
+    override.vm.box = "debian/contrib-stretch64"
   end
 
   config.vm.provider "docker" do |d|
@@ -17,6 +17,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :shell, :inline => "sed -i 's/main$/main non-free contrib/g' /etc/apt/sources.list"
   config.vm.provision :shell, :inline => "sed -i 's/# en_DK.UTF-8/en_DK.UTF-8/' /etc/locale.gen && locale-gen"
+
+  config.vm.provision "shell", inline: "apt-get install --yes python-apt"
 
   $script = <<-SCRIPT
   ln -sf /vagrant/src $HOME/src
