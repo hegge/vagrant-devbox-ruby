@@ -1,4 +1,6 @@
-src/python
-src/lib
-
 .vagrant
+
+SALT-ServerSide-Architecture/
+dsp-picniic-server/
+dsp-tf-backend/
+dsp-vega/
