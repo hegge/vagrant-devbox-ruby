@@ -8,20 +8,20 @@
   with_items:
   - git
   - vim
-  - exuberant-ctags
   - zsh
   - tmux
 
 - user: name=vagrant shell=/usr/bin/zsh
   become: true
 
-#- name: clone dotfiles
-#  git:
-#    repo: ssh://torstein@enophook.resisty.net/srv/git/torstein/home.git
-#    dest: $HOME/home
-#    update: yes
-#    accept_hostkey: yes
-#- name: symlink dotfiles
-#  shell: $HOME/home/symlink.sh
-#- name: set git config
-#  shell: test ! -f .gitconfig.local && printf "[push]\n\tdefault = upstream\n" >.gitconfig.local || true
+- name: clone dotfiles
+  git:
+    repo: ssh://torstein@enophook.resisty.net/srv/git/torstein/home.git
+    dest: /home/vagrant/home
+    update: yes
+    accept_hostkey: yes
+    force: yes
+- name: symlink dotfiles
+  shell: /home/vagrant/home/symlink.sh
+- name: set git config
+  shell: test ! -f .gitconfig.local && printf "[push]\n\tdefault = upstream\n" >.gitconfig.local || true

@@ -1,0 +1,64 @@
+---
+- hosts: all
+  roles:
+  - common
+
+  tasks:
+  - name: update apt cache
+    become: true
+    apt: update_cache=yes
+
+  - name: install devbox packages
+    become: true
+    apt: name={{ item }} state=present
+    with_items:
+    - make
+    - postgresql
+    - ruby
+    - rake
+    - libpq-dev
+    - curl
+    - python-psycopg2
+
+  - name: get pubkey for rvm
+    shell: command curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+  - name: install ruby from rvm
+    shell: curl -sSL https://get.rvm.io | bash -s stable --ruby
+
+  - name: install bundle
+    bundler:
+      state: present
+      chdir: /vagrant/dsp-vega
+      executable: ~/.rvm/gems/ruby-2.5.1/wrappers/bundle
+  - name: install bundle
+    bundler:
+      state: present
+      chdir: /vagrant/dsp-picniic-server
+      executable: ~/.rvm/gems/ruby-2.5.1/wrappers/bundle
+
+  - name: Create database user
+    become: yes
+    become_user: postgres
+    postgresql_user:
+      name: vega
+      password: vegadevpassword
+      role_attr_flags: CREATEDB,SUPERUSER
+  - name: Create database user
+    become: yes
+    become_user: postgres
+    postgresql_user:
+      name: picniic
+      password: password
+      role_attr_flags: CREATEDB,SUPERUSER
+
+  - name: create db
+    shell: cd /vagrant/dsp-vega && ~/.rvm/gems/ruby-2.5.1/wrappers/bundle exec rake db:create db:migrate
+  - name: create db
+    shell: cd /vagrant/dsp-picniic-server && ~/.rvm/gems/ruby-2.5.1/wrappers/bundle exec rake db:create db:migrate
+
+  - name: redirect db host
+    become: yes
+    lineinfile:
+      dest: /etc/hosts
+      line: '127.0.0.1 db'
+      insertafter: EOF
